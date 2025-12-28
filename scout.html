@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Morse</title>
+
+    <style>
+        body {
+			margin: 0;
+			padding: 40px 0; /* aggiunge spazio sopra */
+			font-family: "Segoe UI", Arial, sans-serif;
+			background: linear-gradient(135deg, #1e1e2f, #3a3a5c);
+			color: #fff;
+			display: flex;
+			justify-content: center;
+		}
+		
+		h2 {
+			font-size: 1.2rem;
+			margin-top: 40px;
+			margin-bottom: 15px;
+			letter-spacing: 1px;
+			color: #aee8ff;
+			text-shadow: 0 0 8px rgba(174, 232, 255, 0.4);
+			border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+			padding-bottom: 8px;
+		}
+
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+            text-align: center;
+            width: 450px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+        }
+
+        p {
+            opacity: 0.8;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #4f8cff;
+            color: white;
+            transition: 0.25s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        button:hover {
+            background: #6fa3ff;
+            transform: translateY(-2px);
+        }
+
+        #traduzioneMorse {
+            margin-top: 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #aee8ff;
+            word-wrap: break-word;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Sito Morse</h1>
+	
+	<h2>Benvenuto, in questo sito puoi tradurre testi in italiano o morse e allenarti con degli esercizi</h2>
+	
+    <p>Sezione dedicata alla traduzione di codici morse in italiano. N.B: usa i caratteri . e - per i punti e le linee. Inoltre per separare una lettera scrivi '/', per le parole '//', mentre per chiudere il testo '///' (opzionale ma più sicuro)</p>
+
+    <input type="text" id="inputMorse" placeholder="Inserisci codice Morse...">
+    <br>
+    <button onclick="traduciMorse()">Traduci</button>
+
+    <p id="traduzioneMorse">--</p>
+	
+	<p>Sezione dedicata alla traduzione di testi da italiano a morse</p>
+
+    <input type="text" id="inputIta" placeholder="Inserisci il testo in italiano...">
+    <br>
+    <button onclick="traduciIta()">Traduci</button>
+
+    <p id="traduzioneIta">--</p>
+	
+	<hr><br>
+	<h2>Esercizi</h2>
+
+	<p>Traduci la frase mostrata:</p>
+
+	<p id="fraseEsercizio" style="font-weight:bold; font-size:1.2rem;">Premi "Nuovo esercizio"</p>
+
+	<input type="text" id="inputEsercizio" placeholder="Inserisci la traduzione...">
+	<br><br>
+
+	<button onclick="controllaEsercizio()">Controlla</button>
+	<button onclick="generaEsercizio()">Nuovo esercizio</button>
+
+	<p id="risultatoEsercizio" style="font-size:1.2rem; margin-top:15px;"></p>
+
+</div>
+
+<script>
+    const morse = [
+        ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0"],
+        [".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--..",".----","..---","...--","....-",".....","-....","--...","---..","----.","-----"]
+    ];
+	
+	const frasiIta = [
+		"BUONANOTTE",
+		"A DOMANI",
+		"MI MANCHI",
+		"HO FAME",
+		"HO SETE",
+		"STO ARRIVANDO",
+		"DOVE SEI",
+		"TI ASPETTO",
+		"NON PREOCCUPARTI",
+		"TUTTO OK",
+		"CHE ORE SONO",
+		"HO BISOGNO DI AIUTO",
+		"STO BENE",
+		"STO MALE",
+		"SONO OCCUPATO",
+		"SONO LIBERO",
+		"ARRIVO SUBITO",
+		"NON POSSO",
+		"TI CHIAMO DOPO",
+		"GRAZIE MILLE",
+		"BUON COMPLEANNO",
+		"BUON ANNO",
+		"BUON NATALE",
+		"FELICE DI VEDERTI",
+		"SEI GENTILE",
+		"SEI FANTASTICO",
+		"NON CAPISCO",
+		"RIPETI PER FAVORE",
+		"DOVE ANDIAMO",
+		"CHE SUCCEDE",
+		"TUTTO BENE",
+		"NON SO",
+		"HO SONNO",
+		"HO PAURA",
+		"SONO PRONTO",
+		"ANDIAMO VIA",
+		"ASPETTAMI",
+		"TORNO SUBITO",
+		"NON HO TEMPO",
+		"MI DISPIACE",
+		"OTTIMA IDEA",
+		"PERFETTO",
+		"INCREDIBILE",
+		"CHE BELLO",
+		"CHE BRUTTO",
+		"NON IMPORTA",
+		"VA BENISSIMO",
+		"SONO QUI",
+		"STO ARRIVANDO",
+		"TI RINGRAZIO"
+	];
+
+    function traduciMorse() {
+        let testo = document.getElementById("inputMorse").value;
+        let parolaIta = "";
+        let lettera = "";
+        let index = 0;
+
+        while (index < testo.length) {
+
+            if (testo.slice(index, index+3) === "///") break;
+
+            if (testo.slice(index, index+2) === "//") {
+                let pos = morse[1].indexOf(lettera);
+                if (pos !== -1) parolaIta += morse[0][pos];
+                lettera = "";
+                parolaIta += " ";
+                index += 2;
+                continue;
+            }
+
+            if (testo[index] === "/") {
+                let pos = morse[1].indexOf(lettera);
+                if (pos !== -1) parolaIta += morse[0][pos];
+                lettera = "";
+            } else {
+                lettera += testo[index];
+            }
+
+            index++;
+        }
+
+        if (lettera.length > 0) {
+            let pos = morse[1].indexOf(lettera);
+            if (pos !== -1) parolaIta += morse[0][pos];
+        }
+
+        document.getElementById("traduzioneMorse").textContent = parolaIta;
+    }
+	
+	function traduciIta() {
+		let testoIta = document.getElementById("inputIta").value.toUpperCase();
+		let testoMorse = "";
+
+		for (let i = 0; i < testoIta.length; i++) {
+			let char = testoIta[i];
+
+			if (char === " ") {
+				testoMorse += "/";
+				continue;
+			}
+
+			let pos = morse[0].indexOf(char);
+			if (pos !== -1) {
+				testoMorse += morse[1][pos] + "/";
+			}
+		}
+
+		document.getElementById("traduzioneIta").textContent = testoMorse;
+	}
+	
+	let soluzioneCorretta = "";
+
+	function generaEsercizio() {
+		// scegli se esercizio in italiano o in morse
+		let tipo = Math.random() < 0.5 ? "ita" : "morse";
+
+		// scegli una frase casuale
+		let frase = frasiIta[Math.floor(Math.random() * frasiIta.length)];
+
+		if (tipo === "ita") {
+			// Mostra frase italiana → utente deve tradurre in Morse
+			document.getElementById("fraseEsercizio").textContent = frase;
+			soluzioneCorretta = traduciItaInterno(frase);
+		} else {
+			// Mostra frase in Morse → utente deve tradurre in Italiano
+			let morseFrase = traduciItaInterno(frase);
+			document.getElementById("fraseEsercizio").textContent = morseFrase;
+			soluzioneCorretta = frase;
+		}
+
+		document.getElementById("risultatoEsercizio").textContent = "";
+		document.getElementById("inputEsercizio").value = "";
+	}
+	
+	function controllaEsercizio() {
+		let risposta = document.getElementById("inputEsercizio").value.trim().toUpperCase();
+
+		if (risposta === soluzioneCorretta) {
+			document.getElementById("risultatoEsercizio").textContent = "Corretto!";
+			document.getElementById("risultatoEsercizio").style.color = "#7CFF7C";
+		} else {
+			document.getElementById("risultatoEsercizio").textContent =
+				"Sbagliato. Risposta corretta: " + soluzioneCorretta;
+			document.getElementById("risultatoEsercizio").style.color = "#FF7C7C";
+		}
+	}
+	
+	function traduciItaInterno(testo) {
+		testo = testo.toUpperCase();
+		let risultato = "";
+
+		for (let i = 0; i < testo.length; i++) {
+			let char = testo[i];
+
+			if (char === " ") {
+				risultato += "/";
+				continue;
+			}
+
+			let pos = morse[0].indexOf(char);
+			if (pos !== -1) {
+				risultato += morse[1][pos] + "/";
+			}
+		}
+
+		return risultato;
+	}
+</script>
+</body>
+</html>
